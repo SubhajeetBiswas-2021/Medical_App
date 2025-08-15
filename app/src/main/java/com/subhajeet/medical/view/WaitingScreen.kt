@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -25,6 +26,8 @@ fun WaitingScreen(navController: NavController?, userId: String,viewModel: MyVie
 
     val getUserByIdstate = viewModel?.getUserByIdstate?.collectAsState()
 
+
+
     LaunchedEffect(userId) {
         if (viewModel != null) {
             viewModel.getUserById(userId)
@@ -43,14 +46,25 @@ fun WaitingScreen(navController: NavController?, userId: String,viewModel: MyVie
     }
 
 
-    Column(modifier = Modifier.fillMaxSize()) {
-        Text(text="Admin has not approved yet. Please wait 24 hours.", modifier = Modifier.fillMaxWidth())
+    Column(modifier = Modifier.fillMaxSize().padding(0.dp,34.dp,0.dp,0.dp)) {
 
-        Spacer(modifier = Modifier.height(10.dp))
-
-        Button(onClick = {viewModel?.getUserById(userId)}) {
-            Text(text="Refresh")
+        if(getUserByIdstate?.value?.isLoading == true){
+            Text("Loading...")
         }
+        else{
+            val name = getUserByIdstate?.value?.success?.user?.name?:""
+
+            Text(text="Hi $name Admin has not approved yet. Please wait 24 hours.", modifier = Modifier.fillMaxWidth())
+
+
+
+            Spacer(modifier = Modifier.height(10.dp))
+
+            Button(onClick = {viewModel?.getUserById(userId)}) {
+                Text(text="Refresh")
+            }
+        }
+
     }
 
 
@@ -65,7 +79,7 @@ fun WaitingScreen(navController: NavController?, userId: String,viewModel: MyVie
 fun WaitingScreenPreview(){
     WaitingScreen(
         viewModel = null, navController = null,
-        userId = null.toString()
+        userId = ""
     )
 }
 
