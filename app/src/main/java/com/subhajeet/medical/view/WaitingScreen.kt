@@ -36,7 +36,7 @@ fun WaitingScreen(navController: NavController?, userId: String,viewModel: MyVie
     if(isApproved){
         navController?.navigate(Routes.HomeRoutes){
 
-                popUpTo(Routes.WaitingRoutes) { inclusive = true }
+                popUpTo(Routes.WaitingRoutes) { inclusive = true } //We call popUpTo so that pressing back doesn’t return to the WaitingScreen.
 
         }
         return // stop showing the waiting UI
