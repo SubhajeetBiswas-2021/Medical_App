@@ -48,7 +48,13 @@ fun LoginScreen(navController: NavController?,viewModel: MyViewModel?= hiltViewM
             }
             loginState.value.success != null -> {
                 Toast.makeText(context,loginState.value.success.toString(),Toast.LENGTH_SHORT).show()
-                navController?.navigate(Routes.WaitingRoutes)
+                //navController?.navigate(Routes.WaitingRoutes)
+                if (loginState.value.success != null) {
+                    val userId = loginState.value.success.toString() // success holds message from API, i.e., userId
+                    navController?.navigate(Routes.WaitingRoutes(userId))
+
+                }
+
             }
         }
     }
