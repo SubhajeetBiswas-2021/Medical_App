@@ -7,7 +7,9 @@ import androidx.navigation.compose.composable
 
 
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.toRoute
 import com.subhajeet.medical.R
+import com.subhajeet.medical.view.HomeScreen
 import com.subhajeet.medical.view.LoginScreen
 import com.subhajeet.medical.view.SignUpScreen
 import com.subhajeet.medical.view.WaitingScreen
@@ -28,7 +30,12 @@ fun NavApp() {
         }
 
         composable<Routes.WaitingRoutes>{
-            WaitingScreen(navController)
+            val data = it.toRoute<Routes.WaitingRoutes>()
+            WaitingScreen(navController , userId = data.userId)
+        }
+
+        composable<Routes.HomeRoutes>{
+            HomeScreen(navController)
         }
     }
 
