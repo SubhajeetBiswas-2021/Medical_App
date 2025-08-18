@@ -1,5 +1,6 @@
 package com.subhajeet.medical.models.responseModels
 
+
 data class User(
     val PinCode: String,
     val address: String,
