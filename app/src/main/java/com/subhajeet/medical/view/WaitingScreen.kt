@@ -35,16 +35,18 @@ fun WaitingScreen(navController: NavController?, userId: String,viewModel: MyVie
     }
 
     val isApproved = getUserByIdstate?.value?.success?.user?.isApproved == 1
+    LaunchedEffect(isApproved) {
+        if (isApproved) {
+            navController?.navigate(Routes.HomeRoutes) {
 
-    if(isApproved){
-        navController?.navigate(Routes.HomeRoutes){
+               /* popUpTo(Routes.WaitingRoutes) {
+                    inclusive = true
+                } //We call popUpTo so that pressing back doesn’t return to the WaitingScreen.*/
 
-                popUpTo(Routes.WaitingRoutes) { inclusive = true } //We call popUpTo so that pressing back doesn’t return to the WaitingScreen.
+            }
 
         }
-        return // stop showing the waiting UI
     }
-
 
     Column(modifier = Modifier.fillMaxSize().padding(0.dp,34.dp,0.dp,0.dp)) {
 
