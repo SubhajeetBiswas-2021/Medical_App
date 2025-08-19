@@ -74,7 +74,7 @@ fun eachCard(name:String,price:String,stock:String,product_id:String) {
             Spacer(modifier=Modifier.height(10.dp))
 
             Text(
-                text = price,
+                text = "Price:${price}",
                 fontSize = 16.sp,
                 fontStyle = FontStyle.Italic,
                 textAlign = TextAlign.End,
@@ -86,7 +86,7 @@ fun eachCard(name:String,price:String,stock:String,product_id:String) {
             Spacer(modifier=Modifier.height(10.dp))
 
             Text(
-                text = stock,
+                text = "Stock:${stock}",
                 fontSize = 16.sp,
                 fontStyle = FontStyle.Italic,
                 textAlign = TextAlign.End,
