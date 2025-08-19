@@ -1,10 +1,12 @@
 package com.subhajeet.medical.viewModel
 
 
+import android.media.CamcorderProfile.getAll
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.subhajeet.medical.Utils.ResultState
 import com.subhajeet.medical.models.responseModels.LoginResponse
+import com.subhajeet.medical.models.responseModels.getAllProductResponse
 import com.subhajeet.medical.models.responseModels.getUserByIdResponse
 import com.subhajeet.medical.repo.Repo
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -22,6 +24,9 @@ class MyViewModel @Inject constructor(private val repo: Repo): ViewModel() {
 
     private val _getUserByIdstate = MutableStateFlow(getUserByIdState())
     val getUserByIdstate = _getUserByIdstate.asStateFlow()
+
+    private val _getAllProductstate = MutableStateFlow(getAllProductState())
+    val getAllProductstate = _getAllProductstate.asStateFlow()
 
 
     fun login(email:String,password:String){
@@ -64,6 +69,26 @@ class MyViewModel @Inject constructor(private val repo: Repo): ViewModel() {
             }
     }
 
+    fun getAllProduct(){
+        viewModelScope.launch(Dispatchers.IO){
+            repo.getAllProduct().collect{result ->
+
+                when(result){
+                    is ResultState.Loading ->{
+                        _getAllProductstate.value = getAllProductState(isLoading = true)
+                    }
+                    is ResultState.Success -> {
+                        _getAllProductstate.value = getAllProductState(success = result.data)
+                    }
+                    is ResultState.Error -> {
+                        _getAllProductstate.value = getAllProductState(error = result.message)
+                    }
+                }
+            }
+
+        }
+    }
+
 
 
 }
@@ -79,5 +104,11 @@ data class  getUserByIdState(
     val isLoading:Boolean=false,
     val error:String?=null,
     val success:getUserByIdResponse? = null
+)
+
+data class  getAllProductState(
+    val isLoading: Boolean=false,
+    val error:String?=null,
+    val success: getAllProductResponse?=null
 )
 
