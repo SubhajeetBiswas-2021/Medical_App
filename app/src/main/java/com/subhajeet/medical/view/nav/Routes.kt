@@ -17,4 +17,7 @@ sealed class Routes {
 
     @Serializable
     object HomeRoutes
+
+    @Serializable
+    object OrderRoutes
 }

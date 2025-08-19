@@ -1,16 +1,15 @@
 package com.subhajeet.medical.view.nav
 
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 
 
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
-import com.subhajeet.medical.R
 import com.subhajeet.medical.view.HomeScreen
 import com.subhajeet.medical.view.LoginScreen
+import com.subhajeet.medical.view.OrderScreen
 import com.subhajeet.medical.view.SignUpScreen
 import com.subhajeet.medical.view.WaitingScreen
 
@@ -36,6 +35,10 @@ fun NavApp() {
 
         composable<Routes.HomeRoutes>{
             HomeScreen(navController)
+        }
+
+        composable<Routes.OrderRoutes> {
+            OrderScreen(navController)
         }
     }
 
