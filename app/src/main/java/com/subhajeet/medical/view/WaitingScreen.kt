@@ -35,8 +35,9 @@ fun WaitingScreen(navController: NavController?, userId: String,viewModel: MyVie
     }
 
     val isApproved = getUserByIdstate?.value?.success?.user?.isApproved == 1
+    val block = getUserByIdstate?.value?.success?.user?.block == 0
     LaunchedEffect(isApproved) {
-        if (isApproved) {
+        if (isApproved && block) {
             navController?.navigate(Routes.HomeRoutes) {
 
                /* popUpTo(Routes.WaitingRoutes) {
