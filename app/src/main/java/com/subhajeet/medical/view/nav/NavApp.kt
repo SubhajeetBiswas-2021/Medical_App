@@ -1,10 +1,9 @@
 package com.subhajeet.medical.view.nav
 
+
 import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-
-
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import com.subhajeet.medical.view.HomeScreen
@@ -38,7 +37,8 @@ fun NavApp() {
         }
 
         composable<Routes.OrderRoutes> {
-            OrderScreen(navController)
+            val data = it.toRoute<Routes.OrderRoutes>()
+            OrderScreen(navController, productId = data.productId)
         }
     }
 
