@@ -19,5 +19,5 @@ sealed class Routes {
     object HomeRoutes
 
     @Serializable
-    object OrderRoutes
+    data class OrderRoutes(val productId: String)
 }

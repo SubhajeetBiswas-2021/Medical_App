@@ -1,5 +1,6 @@
 package com.subhajeet.medical.view
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -24,6 +25,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.subhajeet.medical.view.nav.Routes
 import com.subhajeet.medical.viewModel.MyViewModel
 
 @Composable
@@ -49,7 +51,18 @@ fun HomeScreen(navController: NavController, viewModel:MyViewModel= hiltViewMode
         getAllProductstate.value.success?.products?.isNotEmpty() == true ->{
             LazyColumn {
                 items(getAllProductstate.value.success?.products?: emptyList()){
-                    eachCard(name=it.name,price=it.price,stock=it.stock,product_id=it.product_id)
+                    eachCard(
+                        name = it.name,
+                        price = it.price,
+                        stock = it.stock,
+                        product_id = it.product_id,
+                        onClick = {
+                            navController.navigate(Routes.OrderRoutes(
+                                productId = it.product_id
+                            ))
+                        }
+                    )
+
                 }
             }
         }
@@ -61,9 +74,11 @@ fun HomeScreen(navController: NavController, viewModel:MyViewModel= hiltViewMode
 
 //@Preview(showBackground = true, showSystemUi = true)
 @Composable
-fun eachCard(name:String,price:String,stock:String,product_id:String) {
+fun eachCard(name:String,price:String,stock:String,product_id:String,onClick:()->Unit) {
 
-    Card(modifier = Modifier.padding(5.dp,45.dp,5.dp,5.dp).height(140.dp), colors = CardDefaults.cardColors(
+    Card(modifier = Modifier.padding(5.dp,45.dp,5.dp,5.dp).height(140.dp).clickable {
+        onClick()
+    }, colors = CardDefaults.cardColors(
         containerColor = MaterialTheme.colorScheme.surfaceVariant,
     )) {
         Box(modifier = Modifier.fillMaxSize()){
