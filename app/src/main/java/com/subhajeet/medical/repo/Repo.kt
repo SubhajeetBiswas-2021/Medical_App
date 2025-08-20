@@ -4,6 +4,7 @@ import com.subhajeet.medical.Utils.ResultState
 import com.subhajeet.medical.models.ApiServices
 import com.subhajeet.medical.models.responseModels.LoginResponse
 import com.subhajeet.medical.models.responseModels.getAllProductResponse
+import com.subhajeet.medical.models.responseModels.getProductByProductIdResponse
 import com.subhajeet.medical.models.responseModels.getUserByIdResponse
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -54,6 +55,22 @@ class Repo @Inject constructor(private val apiServices: ApiServices) {
             val response = apiServices.getAllProduct()
 
             if (response.isSuccessful && response.body() !=null){
+                emit(ResultState.Success(response.body()!!))
+            }else{
+                emit(ResultState.Error(response.errorBody()?.string() ?: "Unknown error"))
+            }
+        }catch (e:Exception){
+            emit(ResultState.Error(e.message?:"An error message"))
+        }
+    }
+
+    suspend fun getProductById(productId:String):Flow<ResultState<getProductByProductIdResponse>> = flow {
+
+        emit(ResultState.Loading)
+        try {
+            val response = apiServices.getProductById(productId)
+
+            if(response.isSuccessful && response.body() != null){
                 emit(ResultState.Success(response.body()!!))
             }else{
                 emit(ResultState.Error(response.errorBody()?.string() ?: "Unknown error"))

@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.subhajeet.medical.Utils.ResultState
 import com.subhajeet.medical.models.responseModels.LoginResponse
 import com.subhajeet.medical.models.responseModels.getAllProductResponse
+import com.subhajeet.medical.models.responseModels.getProductByProductIdResponse
 import com.subhajeet.medical.models.responseModels.getUserByIdResponse
 import com.subhajeet.medical.repo.Repo
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -27,6 +28,9 @@ class MyViewModel @Inject constructor(private val repo: Repo): ViewModel() {
 
     private val _getAllProductstate = MutableStateFlow(getAllProductState())
     val getAllProductstate = _getAllProductstate.asStateFlow()
+
+    private val _getProductByIdstate = MutableStateFlow(getProductByIdState())
+    val getProductByIdstate = _getProductByIdstate.asStateFlow()
 
 
     fun login(email:String,password:String){
@@ -90,6 +94,27 @@ class MyViewModel @Inject constructor(private val repo: Repo): ViewModel() {
     }
 
 
+    fun getProductById(productId:String){
+        viewModelScope.launch(Dispatchers.IO){
+            repo.getProductById(productId).collect{ result ->
+                println("Result: $result") // Add this line
+                when(result){
+                    is ResultState.Loading ->{
+                        _getProductByIdstate.value = getProductByIdState(isLoading = true)
+                    }
+                    is ResultState.Success -> {
+                        _getProductByIdstate.value = getProductByIdState(success = result.data)
+                    }
+                    is ResultState.Error -> {
+                        _getProductByIdstate.value = getProductByIdState(error = result.message)
+                    }
+                }
+
+            }
+        }
+    }
+
+
 
 }
 
@@ -110,5 +135,11 @@ data class  getAllProductState(
     val isLoading: Boolean=false,
     val error:String?=null,
     val success: getAllProductResponse?=null
+)
+
+data class getProductByIdState(
+    val isLoading:Boolean=false,
+    val error:String?=null,
+    val success:getProductByProductIdResponse? = null
 )
 
