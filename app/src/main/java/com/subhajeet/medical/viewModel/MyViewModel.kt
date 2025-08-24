@@ -9,6 +9,7 @@ import com.subhajeet.medical.models.responseModels.LoginResponse
 import com.subhajeet.medical.models.responseModels.getAllProductResponse
 import com.subhajeet.medical.models.responseModels.getProductByProductIdResponse
 import com.subhajeet.medical.models.responseModels.getUserByIdResponse
+import com.subhajeet.medical.prf.UserPreferences
 import com.subhajeet.medical.repo.Repo
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -18,7 +19,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class MyViewModel @Inject constructor(private val repo: Repo): ViewModel() {
+class MyViewModel @Inject constructor(private val repo: Repo,private val userPreferences: UserPreferences): ViewModel() {
 
     private val _loginstate = MutableStateFlow(LoginState())
     val loginState = _loginstate.asStateFlow()
@@ -42,6 +43,9 @@ class MyViewModel @Inject constructor(private val repo: Repo): ViewModel() {
                     }
                     is ResultState.Success -> {
                         _loginstate.value = LoginState(success = result.data)
+
+                        //Save user Id to preferences
+                        userPreferences.saveUserId(result.data.userId)
                     }
                     is ResultState.Error -> {
                         _loginstate.value = LoginState(error = result.message)
