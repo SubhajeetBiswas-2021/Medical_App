@@ -21,11 +21,13 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import com.subhajeet.medical.view.HomeScreen
 import com.subhajeet.medical.view.LoginScreen
 import com.subhajeet.medical.view.OrderScreen
+import com.subhajeet.medical.view.Profile
 import com.subhajeet.medical.view.SignUpScreen
 import com.subhajeet.medical.view.WaitingScreen
 import com.subhajeet.medical.viewModel.MyViewModel
@@ -64,8 +66,21 @@ fun NavApp(viewModel: MyViewModel= hiltViewModel()) {
     )
     var selected by remember { mutableIntStateOf(0) } // managing state for for which bottomNavItems is selected
 
+    // ✅ Observe the current route
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentDestination = navBackStackEntry?.destination?.route
+
+    // ✅ Define screens where bottom nav should be hidden
+    val hideBottomBarRoutes = listOf(
+        Routes.LoginRoutes::class.qualifiedName,
+        Routes.SignUpRoutes::class.qualifiedName,
+        Routes.WaitingRoutes::class.qualifiedName
+    )
+
     Scaffold(
         bottomBar = {
+            // ✅ Show BottomBar only when NOT in login/signup/waiting
+            if (!hideBottomBarRoutes.contains(currentDestination)){
             NavigationBar {
 
                 bottomNavItems.forEachIndexed{index, item ->
@@ -77,7 +92,7 @@ fun NavApp(viewModel: MyViewModel= hiltViewModel()) {
                             selected = index  //updating the state
                             when(index) {
                                 0-> navController.navigate(Routes.HomeRoutes)
-                                1-> navController.navigate(Routes.ProfileRoutes)
+                                2-> navController.navigate(Routes.ProfileRoutes)
 
                             }
 
@@ -91,6 +106,7 @@ fun NavApp(viewModel: MyViewModel= hiltViewModel()) {
                 }
 
             }
+                }
         }
     ) { innerPadding ->
 
@@ -120,7 +136,7 @@ fun NavApp(viewModel: MyViewModel= hiltViewModel()) {
             }
 
             composable<Routes.ProfileRoutes> {
-                LoginScreen((navController))
+                Profile((navController))
             }
         }
 
