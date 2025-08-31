@@ -38,7 +38,7 @@ fun WaitingScreen(navController: NavController?, userId: String,viewModel: MyVie
     val block = getUserByIdstate?.value?.success?.user?.block == 0
     LaunchedEffect(isApproved) {
         if (isApproved && block) {
-            navController?.navigate(Routes.HomeRoutes) {
+            navController?.navigate(Routes.HomeRoutes(userId)) {
 
                /* popUpTo(Routes.WaitingRoutes) {
                     inclusive = true

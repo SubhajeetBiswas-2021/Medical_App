@@ -29,7 +29,7 @@ import com.subhajeet.medical.view.nav.Routes
 import com.subhajeet.medical.viewModel.MyViewModel
 
 @Composable
-fun HomeScreen(navController: NavController, viewModel:MyViewModel= hiltViewModel()) {
+fun HomeScreen(navController: NavController, userId: String, viewModel:MyViewModel= hiltViewModel()) {
 
 
 
@@ -58,7 +58,8 @@ fun HomeScreen(navController: NavController, viewModel:MyViewModel= hiltViewMode
                         product_id = it.product_id,
                         onClick = {
                             navController.navigate(Routes.OrderRoutes(
-                                productId = it.product_id
+                                productId = it.product_id,
+                                 userId=userId
                             ))
                         }
                     )
