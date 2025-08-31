@@ -1,12 +1,13 @@
 package com.subhajeet.medical.viewModel
 
 
-import android.media.CamcorderProfile.getAll
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.subhajeet.medical.Utils.ResultState
+import com.subhajeet.medical.models.responseModels.CreateOrderResponse
 import com.subhajeet.medical.models.responseModels.LoginResponse
 import com.subhajeet.medical.models.responseModels.getAllProductResponse
+import com.subhajeet.medical.models.responseModels.getOrderDetailsByIdResponse
 import com.subhajeet.medical.models.responseModels.getProductByProductIdResponse
 import com.subhajeet.medical.models.responseModels.getUserByIdResponse
 import com.subhajeet.medical.prf.UserPreferences
@@ -32,6 +33,12 @@ class MyViewModel @Inject constructor(private val repo: Repo, val userPreference
 
     private val _getProductByIdstate = MutableStateFlow(getProductByIdState())
     val getProductByIdstate = _getProductByIdstate.asStateFlow()
+
+    private val _addOrderDetailsstate = MutableStateFlow(addOrderDetailsState())
+    val addOrderDetailsstate = _addOrderDetailsstate.asStateFlow()
+
+    private val _getOrderDetailsByIdstate = MutableStateFlow(getOrderDetailsByIdState())
+    val getOrderDetailsByIdstate = _getOrderDetailsByIdstate.asStateFlow()
 
 
     fun login(email:String,password:String){
@@ -118,6 +125,47 @@ class MyViewModel @Inject constructor(private val repo: Repo, val userPreference
         }
     }
 
+    fun addOrderDetails(user_id:String,productId:String,Quantity:String,price:String,productName:String,message:String,category:String){
+        viewModelScope.launch(Dispatchers.IO){
+            repo.addOrderDetails(user_id,productId,Quantity,price,productName,message,category).collect{ result ->
+                println("Result: $result") // Add this line
+                when(result){
+                    is ResultState.Loading ->{
+                        _addOrderDetailsstate.value = addOrderDetailsState(isLoading = true)
+                    }
+                    is ResultState.Success -> {
+                        _addOrderDetailsstate.value = addOrderDetailsState(success = result.data)
+                    }
+                    is ResultState.Error -> {
+                        _addOrderDetailsstate.value = addOrderDetailsState(error = result.message)
+                    }
+                }
+
+            }
+        }
+
+    }
+
+    fun getOrderDetailsById(userId:String){
+        viewModelScope.launch(Dispatchers.IO){
+            repo.getOrderDetailsById(userId).collect{ result ->
+                println("Result: $result") // Add this line
+                when(result){
+                    is ResultState.Loading ->{
+                        _getOrderDetailsByIdstate.value = getOrderDetailsByIdState(isLoading = true)
+                    }
+                    is ResultState.Success -> {
+                        _getOrderDetailsByIdstate.value = getOrderDetailsByIdState(success = result.data)
+                    }
+                    is ResultState.Error -> {
+                        _getOrderDetailsByIdstate.value = getOrderDetailsByIdState(error = result.message)
+                    }
+                }
+
+            }
+        }
+    }
+
 
 
 }
@@ -145,5 +193,17 @@ data class getProductByIdState(
     val isLoading:Boolean=false,
     val error:String?=null,
     val success:getProductByProductIdResponse? = null
+)
+
+data class addOrderDetailsState(
+    val isLoading:Boolean=false,
+    val error:String?=null,
+    val success:CreateOrderResponse? = null
+)
+
+data class getOrderDetailsByIdState(
+    val isLoading:Boolean=false,
+    val error:String?=null,
+    val success:getOrderDetailsByIdResponse? = null
 )
 

@@ -2,7 +2,7 @@ package com.subhajeet.medical.view.nav
 
 
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Settings
@@ -27,6 +27,7 @@ import androidx.navigation.toRoute
 import com.subhajeet.medical.view.HomeScreen
 import com.subhajeet.medical.view.LoginScreen
 import com.subhajeet.medical.view.OrderScreen
+import com.subhajeet.medical.view.PlacedOrders
 import com.subhajeet.medical.view.Profile
 import com.subhajeet.medical.view.SignUpScreen
 import com.subhajeet.medical.view.WaitingScreen
@@ -60,7 +61,7 @@ fun NavApp(viewModel: MyViewModel= hiltViewModel()) {
 
     val bottomNavItems= listOf(
         BottomNavItem("Home",icon = Icons.Default.Home),
-        BottomNavItem("Add",icon = Icons.Default.Add),
+        BottomNavItem("PlacedOrder",icon = Icons.Default.Done),
         BottomNavItem("Profile",icon = Icons.Default.Person),
         BottomNavItem("Settings",icon = Icons.Default.Settings)
     )
@@ -91,7 +92,8 @@ fun NavApp(viewModel: MyViewModel= hiltViewModel()) {
 
                             selected = index  //updating the state
                             when(index) {
-                                0-> navController.navigate(Routes.HomeRoutes)
+                                0-> navController.navigate(Routes.HomeRoutes(userId))
+                                1-> navController.navigate(Routes.PlacedOrders(userId))
                                 2-> navController.navigate(Routes.ProfileRoutes)
 
                             }
@@ -127,16 +129,23 @@ fun NavApp(viewModel: MyViewModel= hiltViewModel()) {
             }
 
             composable<Routes.HomeRoutes> {
-                HomeScreen(navController)
+                val data = it.toRoute<Routes.HomeRoutes>()
+                HomeScreen(navController,userId = data.userId)
             }
 
             composable<Routes.OrderRoutes> {
                 val data = it.toRoute<Routes.OrderRoutes>()
-                OrderScreen(navController, productId = data.productId)
+                OrderScreen(navController, productId = data.productId,userId=data.userId
+                )
             }
 
             composable<Routes.ProfileRoutes> {
                 Profile((navController))
+            }
+
+            composable<Routes.PlacedOrders> {
+                val data = it.toRoute<Routes.PlacedOrders>()
+                PlacedOrders(navController,userId=data.userId)
             }
         }
 

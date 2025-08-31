@@ -2,8 +2,10 @@ package com.subhajeet.medical.repo
 
 import com.subhajeet.medical.Utils.ResultState
 import com.subhajeet.medical.models.ApiServices
+import com.subhajeet.medical.models.responseModels.CreateOrderResponse
 import com.subhajeet.medical.models.responseModels.LoginResponse
 import com.subhajeet.medical.models.responseModels.getAllProductResponse
+import com.subhajeet.medical.models.responseModels.getOrderDetailsByIdResponse
 import com.subhajeet.medical.models.responseModels.getProductByProductIdResponse
 import com.subhajeet.medical.models.responseModels.getUserByIdResponse
 import kotlinx.coroutines.flow.Flow
@@ -69,6 +71,38 @@ class Repo @Inject constructor(private val apiServices: ApiServices) {
         emit(ResultState.Loading)
         try {
             val response = apiServices.getProductById(productId)
+
+            if(response.isSuccessful && response.body() != null){
+                emit(ResultState.Success(response.body()!!))
+            }else{
+                emit(ResultState.Error(response.errorBody()?.string() ?: "Unknown error"))
+            }
+        }catch (e:Exception){
+            emit(ResultState.Error(e.message?:"An error message"))
+        }
+    }
+
+    suspend fun addOrderDetails(user_id:String,productId:String,Quantity:String,price:String,productName:String,message:String,category:String):Flow<ResultState<CreateOrderResponse>> = flow {
+
+        emit(ResultState.Loading)
+        try {
+            val response = apiServices.addOrderDetails(user_id,productId,Quantity,price,productName,message,category)
+
+            if(response.isSuccessful && response.body() != null){
+                emit(ResultState.Success(response.body()!!))
+            }else{
+                emit(ResultState.Error(response.errorBody()?.string() ?: "Unknown error"))
+            }
+        }catch (e:Exception){
+            emit(ResultState.Error(e.message?:"An error message"))
+        }
+    }
+
+    suspend fun getOrderDetailsById(userId:String) : Flow<ResultState<getOrderDetailsByIdResponse>> = flow{
+
+        emit(ResultState.Loading)
+        try{
+            val response = apiServices.getOrderDetailsById(userId)
 
             if(response.isSuccessful && response.body() != null){
                 emit(ResultState.Success(response.body()!!))

@@ -16,8 +16,14 @@ sealed class Routes {
 
 
     @Serializable
-    object HomeRoutes
+    data class HomeRoutes(val userId: String)
 
     @Serializable
-    data class OrderRoutes(val productId: String)
+    data class OrderRoutes(val productId: String,val userId: String)
+
+    @Serializable
+    object ProfileRoutes
+
+    @Serializable
+    data class PlacedOrders(val userId: String)
 }
