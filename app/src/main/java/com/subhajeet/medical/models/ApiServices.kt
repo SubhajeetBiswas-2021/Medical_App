@@ -1,6 +1,7 @@
 package com.subhajeet.medical.models
 
 import com.subhajeet.medical.models.responseModels.CreateOrderResponse
+import com.subhajeet.medical.models.responseModels.CreateUserResponse
 import com.subhajeet.medical.models.responseModels.LoginResponse
 import com.subhajeet.medical.models.responseModels.getAllProductResponse
 import com.subhajeet.medical.models.responseModels.getOrderDetailsByIdResponse
@@ -58,4 +59,17 @@ interface ApiServices {
     suspend fun getOrderDetailsById(
         @Field("userId") userId: String
     ):Response<getOrderDetailsByIdResponse>
+
+    @FormUrlEncoded
+    @POST("signUp")
+    suspend fun signUp(
+        @Field("name") name:String,
+        @Field("email") email:String,
+        @Field("password") password:String,
+        @Field("phonenumber") phonenumber:String,
+        @Field("PinCode") PinCode:String,
+        @Field("address") address:String,
+
+
+        ):Response<CreateUserResponse>
 }

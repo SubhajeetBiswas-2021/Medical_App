@@ -3,6 +3,7 @@ package com.subhajeet.medical.repo
 import com.subhajeet.medical.Utils.ResultState
 import com.subhajeet.medical.models.ApiServices
 import com.subhajeet.medical.models.responseModels.CreateOrderResponse
+import com.subhajeet.medical.models.responseModels.CreateUserResponse
 import com.subhajeet.medical.models.responseModels.LoginResponse
 import com.subhajeet.medical.models.responseModels.getAllProductResponse
 import com.subhajeet.medical.models.responseModels.getOrderDetailsByIdResponse
@@ -103,6 +104,23 @@ class Repo @Inject constructor(private val apiServices: ApiServices) {
         emit(ResultState.Loading)
         try{
             val response = apiServices.getOrderDetailsById(userId)
+
+            if(response.isSuccessful && response.body() != null){
+                emit(ResultState.Success(response.body()!!))
+            }else{
+                emit(ResultState.Error(response.errorBody()?.string() ?: "Unknown error"))
+            }
+        }catch (e:Exception){
+            emit(ResultState.Error(e.message?:"An error message"))
+        }
+    }
+
+
+    suspend fun signUp(name:String,email:String,password:String,phonenumber:String,PinCode:String,address:String) : Flow<ResultState<CreateUserResponse>> = flow{
+
+        emit(ResultState.Loading)
+        try{
+            val response = apiServices.signUp(name,email,password,phonenumber,PinCode,address)
 
             if(response.isSuccessful && response.body() != null){
                 emit(ResultState.Success(response.body()!!))

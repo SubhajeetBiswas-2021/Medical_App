@@ -78,10 +78,14 @@ fun NavApp(viewModel: MyViewModel= hiltViewModel()) {
         Routes.WaitingRoutes::class.qualifiedName
     )
 
+    val shouldHideBottomBar = hideBottomBarRoutes.any { route ->
+        currentDestination?.startsWith(route ?: "") == true
+    }
+
     Scaffold(
         bottomBar = {
             // ✅ Show BottomBar only when NOT in login/signup/waiting
-            if (!hideBottomBarRoutes.contains(currentDestination)){
+            if (!shouldHideBottomBar){
             NavigationBar {
 
                 bottomNavItems.forEachIndexed{index, item ->

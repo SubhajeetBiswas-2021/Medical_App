@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.subhajeet.medical.Utils.ResultState
 import com.subhajeet.medical.models.responseModels.CreateOrderResponse
+import com.subhajeet.medical.models.responseModels.CreateUserResponse
 import com.subhajeet.medical.models.responseModels.LoginResponse
 import com.subhajeet.medical.models.responseModels.getAllProductResponse
 import com.subhajeet.medical.models.responseModels.getOrderDetailsByIdResponse
@@ -40,6 +41,8 @@ class MyViewModel @Inject constructor(private val repo: Repo, val userPreference
     private val _getOrderDetailsByIdstate = MutableStateFlow(getOrderDetailsByIdState())
     val getOrderDetailsByIdstate = _getOrderDetailsByIdstate.asStateFlow()
 
+    private val _signUpstate = MutableStateFlow(signUpState())
+    val signUpstate = _signUpstate.asStateFlow()
 
     fun login(email:String,password:String){
         viewModelScope.launch(Dispatchers.IO) {
@@ -49,10 +52,18 @@ class MyViewModel @Inject constructor(private val repo: Repo, val userPreference
                         _loginstate.value = LoginState(isLoading = true)
                     }
                     is ResultState.Success -> {
-                        _loginstate.value = LoginState(success = result.data)
-
+                       /* _loginstate.value = LoginState(success = result.data)
                         //Save user Id to preferences
-                        userPreferences.saveUserId(result.data.userId)
+                        userPreferences.saveUserId(result.data.userId)*/
+                        val response = result.data
+                        if (response.status == 200 && response.userId.isNotEmpty()) {
+                            // ✅ Valid login
+                            _loginstate.value = LoginState(success = response)
+                            userPreferences.saveUserId(response.userId)
+                        } else {
+                            // ❌ Invalid credentials
+                            _loginstate.value = LoginState(error = "Invalid email or password/SignUp if not ")
+                        }
                     }
                     is ResultState.Error -> {
                         _loginstate.value = LoginState(error = result.message)
@@ -155,10 +166,41 @@ class MyViewModel @Inject constructor(private val repo: Repo, val userPreference
                         _getOrderDetailsByIdstate.value = getOrderDetailsByIdState(isLoading = true)
                     }
                     is ResultState.Success -> {
+
                         _getOrderDetailsByIdstate.value = getOrderDetailsByIdState(success = result.data)
                     }
                     is ResultState.Error -> {
                         _getOrderDetailsByIdstate.value = getOrderDetailsByIdState(error = result.message)
+                    }
+                }
+
+            }
+        }
+    }
+
+
+    fun signUp(name:String,email:String,password:String,phonenumber:String,PinCode:String,address:String){
+        viewModelScope.launch(Dispatchers.IO) {
+            repo.signUp(name,email,password,phonenumber,PinCode,address).collect{ result->
+                when(result){
+                    is ResultState.Loading ->{
+                        _signUpstate.value = signUpState(isLoading = true)
+                    }
+                    is ResultState.Success -> {
+                       // _signUpstate.value = signUp(success = result.data)
+
+                        val response = result.data
+                        if (response.status == 200 && response.message.isNotEmpty()) {
+                            // ✅ Valid login
+                            _signUpstate.value = signUpState(success = response)
+
+                        } else {
+                            //  Invalid credentials
+                            _signUpstate.value = signUpState(error = "Invalid credential or password/SignUp if not ")
+                        }
+                    }
+                    is ResultState.Error -> {
+                        _signUpstate.value = signUpState(error = result.message)
                     }
                 }
 
@@ -205,5 +247,11 @@ data class getOrderDetailsByIdState(
     val isLoading:Boolean=false,
     val error:String?=null,
     val success:getOrderDetailsByIdResponse? = null
+)
+
+data class signUpState(
+    val isLoading:Boolean=false,
+    val error:String?=null,
+    val success:CreateUserResponse? = null
 )
 

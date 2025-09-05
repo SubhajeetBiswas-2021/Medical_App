@@ -87,12 +87,31 @@ fun LoginScreen(navController: NavController?,viewModel: MyViewModel?= hiltViewM
 
         OutlinedButton(
             onClick = { /*Handle login action*/
-            viewModel?.login(email =email.value,
-                password = password.value)},
+                when{
+                    email.value.isBlank() ->{Toast.makeText(context,"Please Enter Email",Toast.LENGTH_SHORT).show()}
+                    password.value.isBlank() ->{Toast.makeText(context,"Please Enter Password",Toast.LENGTH_SHORT).show()}
+                    else ->{
+                        viewModel?.login(email =email.value,
+                            password = password.value)
+                    }
+                }
+            /*viewModel?.login(email =email.value,
+                password = password.value)*/},
             modifier = Modifier.fillMaxWidth()
         ) {
             Text(text="Login")
         }
+
+        OutlinedButton(
+            onClick = { /*Handle login action*/
+                    navController?.navigate(Routes.SignUpRoutes)
+                },
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text(text="SignUp")
+        }
+
+
     }
 
 
